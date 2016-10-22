@@ -63,7 +63,7 @@ class core {
 		?>
 	   	<script>
 	   	setTimeout(function() {
-		      window.location.replace('index.php')
+		      window.location.replace('admin.php')
 	   	}
 		,2000);
 

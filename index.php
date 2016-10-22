@@ -6,20 +6,7 @@ include "include/templates.php";
 // header
 $smarty->display('header.tpl');
 
-$check = $core->check_login();
-if ($check == "FALSE") {
-        if ($section == "forgot_pw") {
-                $smarty->display('forgot_pw.tpl');
-        } else {
-                $smarty->display('login.tpl');
-        }
-} else {
-        if ($section == "") {
-                $core->load_module('dashboard');
-        }
+print "Welcome employee stuff goes here including login.<br>";
 
-        if ($section != "") {
-                $core->load_module($section);
-        }
-}
+$smarty->display('footer.tpl');
 ?>
