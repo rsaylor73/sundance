@@ -17,6 +17,7 @@ class core {
 		die;
 	}
 
+	// employer login check
 	public function check_login() {
 		$sql = "SELECT * FROM `users` WHERE `uuname` = '$_SESSION[uuname]' AND `uupass` = '$_SESSION[uupass]' AND `active` = 'Yes'";
 		$result = $this->new_mysql($sql);
@@ -62,8 +63,8 @@ class core {
 		session_destroy();
 		?>
 	   	<script>
-	   	setTimeout(function() {
-		      window.location.replace('admin.php')
+	  	setTimeout(function() {
+		      window.location.replace('employer.php')
 	   	}
 		,2000);
 
@@ -72,6 +73,7 @@ class core {
 	}
 
 	// Login form
+	/*
 	public function login($msg) {
 		$data = array();
 		if ($msg != "") {
@@ -82,12 +84,14 @@ class core {
 		$template = "login.tpl";
 		$this->load_smarty($data,$template);
 	}
+	*/
 
 	/* This function will check if the logged in user is an admin. If not this function will end the process. */
-	public function is_admin() {
+	// pass $type as Employer, Admin, User, etc
+	public function is_access($type) {
 
-		if ($_SESSION['userType'] != "Admin") {
-			print "<br><font color=red>The section you attempted to access requires to be an admin.<br></font>";
+		if ($_SESSION['userType'] != "$type") {
+			print "<br><font color=red>Access Denied.<br></font>";
 			die;
 		}
 	}
