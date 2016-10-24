@@ -72,20 +72,6 @@ class core {
 		<?php
 	}
 
-	// Login form
-	/*
-	public function login($msg) {
-		$data = array();
-		if ($msg != "") {
-			$data['msg'] = "$msg";	
-		} else {
-			$data['msg'] = "0";
-		}
-		$template = "login.tpl";
-		$this->load_smarty($data,$template);
-	}
-	*/
-
 	/* This function will check if the logged in user is an admin. If not this function will end the process. */
 	// pass $type as Employer, Admin, User, etc
 	public function is_access($type) {
@@ -105,6 +91,22 @@ class core {
 	        //print "TEST: $_SERVER[HTTP_USER_AGENT]<br>";
         	//die;
 	        return preg_match("/(android|avantgo|blackberry|bolt|boost|cricket|docomo|fone|hiptop|mini|iphone|palm|phone|pie|tablet|up\.browser|up\.link|webos|wos)/i", $_SERVER["HTTP_USER_AGENT"]);
+	}
+
+	public function get_states($state) {
+		if ($state == "") {
+			$options .= "<option selected value=\"\">--Select--</option>";
+		}
+		$sql = "SELECT * FROM `state` ORDER BY `state` ASC";
+		$result = $this->new_mysql($sql);
+		while ($row = $result->fetch_assoc()) {
+			if ($row['state_abbr'] == $state) {
+				$options .= "<option selected value=\"$row[state_abbr]\">$row[state]</option>";
+			} else {
+                                $options .= "<option value=\"$row[state_abbr]\">$row[state]</option>";
+			}
+		}
+		return($options);
 	}
 
 }

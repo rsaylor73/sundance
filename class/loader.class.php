@@ -26,7 +26,7 @@ class loader extends users {
 			$this->$module();
                 } elseif (method_exists('api',$module)) {
                         $this->$module();
-		} elseif (method_exists('customers',$module)) {
+		} elseif (method_exists('employees',$module)) {
 			$this->$module();
 		} else {
 			print "<br><font color=red>The $module method does not exist.</font><br>";
