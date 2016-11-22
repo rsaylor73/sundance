@@ -8,7 +8,7 @@ include_once "../include/templates.php";
 
 $_GET['uupass'] = md5($_GET['uupass']);
 
-$sql = "SELECT * FROM `users` WHERE `uuname` = '$_GET[uuname]' AND `uupass` = '$_GET[uupass]'";
+$sql = "SELECT * FROM `admin_users` WHERE `uuname` = '$_GET[uuname]' AND `uupass` = '$_GET[uupass]'";
 $result = $core->new_mysql($sql);
 while ($row = $result->fetch_assoc()) {
 	foreach ($row as $key=>$value) {
@@ -25,7 +25,7 @@ while ($row = $result->fetch_assoc()) {
 	?>
 	<script>
 	setTimeout(function() {
-		document.location.href='employer.php?section=dashboard';
+		document.location.href='admin.php?section=dashboard';
 		//window.location.replace('employer.php?section=dashboard')
 	}
 	,2000);
@@ -33,17 +33,10 @@ while ($row = $result->fetch_assoc()) {
 	<?php
 }
 
-if ($ok != "1") {
-	print "<br><font color=red>Login incorrect. Please try again. Loading...<br></font>";
-	?>
-                        <script>
-                        setTimeout(function() {
-                                document.location.href='employer.php';
-                        }
-                        ,2000);
-                        </script>
-	<?php
 
+if ($ok != "1") {
+	$smarty->assign('msg','<center><font color=red>Login failed.</font></center>');
+	$smarty->display('login.tpl');
 }
 ?>
 

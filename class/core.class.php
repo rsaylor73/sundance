@@ -17,6 +17,105 @@ class core {
 		die;
 	}
 
+        // this is the menu/dashboard for the employer user
+        public function dashboard() {
+                
+		switch($_SESSION['userType']) {
+			case "Admin":
+				$this->users();
+			break;
+
+			case "Employer":
+				$this->employees();
+			break;
+
+			case "Employee":
+				$this->employee_dash();
+			break;
+		}
+        }
+
+	public function employee_dash() {
+		print "<h2>Welcome $_SESSION[FirstName] $_SESSION[LastName]</h2>";
+
+		print "<br><br>";
+		print '<a href="'.LINK1.'" target="blank">'.TITLE1.'</a><br>';
+                print '<a href="'.LINK2.'" target="blank">'.TITLE2.'</a><br>';
+                print '<a href="'.LINK3.'" target="blank">'.TITLE3.'</a><br>';
+
+
+	}
+
+	public function register() {
+		$template = "register.tpl";
+		$this->load_smarty($null,$template);
+	}
+
+	public function search() {
+		$sql = "
+		SELECT
+			`e`.`id`,
+			`e`.`EmailAddress`
+		FROM
+			`employee` e,
+			`users` u
+
+		WHERE
+			`e`.`EmployeeNumber` = `u`.`id`
+			AND `u`.`company` = '$_POST[company]'
+			AND `e`.`FirstName` = '$_POST[employee]'
+			AND `e`.`LastName` = '$_POST[last]'
+			AND SUBSTRING(`e`.`SSN`, -4) = '$_POST[ssn]'
+
+		LIMIT 1
+		";
+		$result = $this->new_mysql($sql);
+		while ($row = $result->fetch_assoc()) {
+			$uupass = md5($_POST['uupass']);
+			$sql2 = "UPDATE `employee` SET `uupass` = '$uupass' WHERE `id` = '$row[id]'";
+			$result2 = $this->new_mysql($sql2);
+			print "<br><br><font color=green>Your account has been registered. Click on Employee above then login using your email 
+			<b>$row[email]</b> and the password you just created. If you forget your password you will need to re-register.</font><br><br>";
+			$found = "1";
+		}
+		if ($found != "1") {
+			print "<br><br><font color=red>Sorry, but the information you entered does not match our records.</font><br><br>";
+		}
+		
+	}
+
+	public function forgot_pw() {
+		$template = "forgot_pw.tpl";
+		$this->load_smarty($null,$template);
+	}
+
+	public function forgot_pwa() {
+                $template = "forgot_pwa.tpl";
+                $this->load_smarty($null,$template);
+        }
+        // admin login check
+        public function acheck_login() {
+                $sql = "SELECT * FROM `admin_users` WHERE `uuname` = '$_SESSION[uuname]' AND `uupass` = '$_SESSION[uupass]' AND `active` = 'Yes'";
+                $result = $this->new_mysql($sql);
+                while ($row = $result->fetch_assoc()) {
+                        $found = "1";
+                        // update session data
+                        foreach ($row as $key=>$value) {
+                                $_SESSION[$key] = $value;
+                        }
+                }
+                if ($found == "1") {
+                        return "TRUE";
+                } else {
+                        $remote_addr = $_SERVER['REMOTE_ADDR'];
+                        if ($remote_addr == SERVER_IP) { // Server IP of the virtual host
+                                return "TRUE";
+                        } else {
+                                return "FALSE";
+                        }
+                }
+        }
+
 	// employer login check
 	public function check_login() {
 		$sql = "SELECT * FROM `users` WHERE `uuname` = '$_SESSION[uuname]' AND `uupass` = '$_SESSION[uupass]' AND `active` = 'Yes'";
@@ -38,6 +137,41 @@ class core {
 				return "FALSE";
 			}
 		}
+	}
+
+	// employee login check
+	public function check_employee_login() {
+		$sql = "
+		SELECT `employee`.*, `users`.`logo`
+
+		FROM 
+			`employee`,`users`
+
+		WHERE 
+			`employee`.`EmailAddress` = '$_SESSION[EmailAddress]' 
+			AND `employee`.`uupass` = '$_SESSION[uupass]'
+			AND `employee`.`EmployeeNumber` = `users`.`id`
+
+		";
+
+                $result = $this->new_mysql($sql);
+                while ($row = $result->fetch_assoc()) {
+                        $found = "1";
+                        // update session data
+                        foreach ($row as $key=>$value) {
+                                $_SESSION[$key] = $value;
+                        }
+                }
+                if ($found == "1") {
+                        return "TRUE";
+                } else {
+                        $remote_addr = $_SERVER['REMOTE_ADDR'];
+                        if ($remote_addr == SERVER_IP) { // Server IP of the virtual host
+                                return "TRUE";
+                        } else {
+                                return "FALSE";
+                        }
+                }
 	}
 
 	public function load_smarty($vars,$template) {
@@ -64,7 +198,7 @@ class core {
 		?>
 	   	<script>
 	  	setTimeout(function() {
-		      window.location.replace('employer.php')
+		      window.location.replace('index.php')
 	   	}
 		,2000);
 

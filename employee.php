@@ -19,13 +19,9 @@ if ($_SESSION['logged'] == "TRUE") {
 }
 $smarty->display('header.tpl');
 
-$check = $core->acheck_login();
+$check = $core->check_employee_login();
 if ($check == "FALSE") {
-        if ($section == "forgot_pw") {
-                $smarty->display('forgot_pwa.tpl');
-        } else {
-                $smarty->display('admin_login.tpl');
-        }
+        $smarty->display('employee_login.tpl');
 } else {
         if ($section == "") {
                 $core->load_module('dashboard');

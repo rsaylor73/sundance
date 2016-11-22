@@ -4,6 +4,32 @@ include PATH."/class/api.class.php";
 
 class employees extends api {
 
+        public function profile() {
+                $this->is_access('Employer');
+                foreach ($_SESSION as $key=>$value) {
+                        $data[$key] = $value;
+                }
+                $template = "profile.tpl";
+                $this->load_smarty($data,$template);
+        }
+
+        public function save_profile() {
+                $this->is_access('Employer');
+                $sql = "SELECT * FROM `users` WHERE `uuname` != '$_SESSION[uuname]' AND `email` = '$_POST[email]'";
+                $result = $this->new_mysql($sql);
+                while ($row = $result->fetch_assoc()) {
+                        print "<br><br><font color=red>Sorry, <b>$_POST[email]</b> is already registered.</font><br><br>";
+                        die;
+                }
+
+                $md5_pw = md5($_POST['uupass']);
+
+                $sql = "UPDATE `users` SET  `uupass` = '$md5_pw' WHERE `uuname` = '$_SESSION[uuname]'";
+                $result = $this->new_mysql($sql);
+                print "<br><br>Your profile has been updated.<br><br>";
+        }
+
+
 	public function employees() {
 		$this->is_access('Employer');
 		$template = "employees.tpl";
@@ -42,13 +68,27 @@ class employees extends api {
 
 
 		$sql = "INSERT INTO `employee` (
-		`sundance_id`,`employer_id`,`employee`,`ssn`,`gender`,`pay_frequency`,`annual_salary`,`hourly_rate`,`w4_marital`,`w4_dependents`,
-		`health_monthly_premium`,`employer_monthly_contribution`,`pretax_premium_monthly`,`hsa`,`email`,`mobile`,
-		`address`,`city`,`state`,`zip`,`full_time`,`active`,`misc`,`date_of_hire`
+		`sundance_id`,`EmployeeNumber`,`FirstName`,`MiddleName`,`LastName`,`SSN`,`Gender`,`pay_frequency`,`annual_salary`,
+		`hourly_rate`,`w4_marital`,`w4_dependents`,
+		`health_monthly_premium`,`employer_monthly_contribution`,`pretax_premium_monthly`,`hsa`,`EmailAddress`,`PhoneNumber`,
+		`Street`,`City`,`State`,`PostalCode`,`full_time`,`EmployeeStatus`,`misc`,`date_of_hire`,
+                `TerminationDate`,`DOB`,`CountryCode`,`WorkStreet`,`WorkPOBox`,`WorkSuite`,`WorkCity`,`WorkState`,
+                `WorkZip`,`WorkCountryCode`,`ServiceLevelCode`,`WorkLocationCode`,`WorkLocationDescription`,
+                `CompanyAccountCode`,`CompanyAccountDescription`,`Department`,`DepartmentDescription`,
+                `CompanyCode`,`OnHealthPlan`,`HealthProvider`,`HealthPlanType`,`HealthPlanID`,
+                `Last4SSN`,`BenefitStatusCode`,`Relationship`
+
 		) VALUES (
-		'$sundance_id','$_SESSION[id]','$p[employee]','$p[ssn]','$p[gender]','$p[pay_frequency]','$p[annual_salary]','$p[hourly_rate]','$p[w4_marital]','$p[w4_dependents]',
+		'$sundance_id','$_SESSION[id]','$p[employee]','$p[middle]','$p[last]','$p[ssn]','$p[gender]','$p[pay_frequency]','$p[annual_salary]','$p[hourly_rate]','$p[w4_marital]','$p[w4_dependents]',
 		'$p[health_monthly_premium]','$p[employer_monthly_contribution]','$p[pretax_premium_monthly]','$p[hsa]','$p[email]','$p[mobile]',
-		'$p[address]','$p[city]','$p[state]','$p[zip]','$p[full_time]','$p[active]','$p[misc]','$p[date_of_hire]'
+		'$p[address]','$p[city]','$p[state]','$p[zip]','$p[full_time]','$p[active]','$p[misc]','$p[date_of_hire]',
+
+                '$p[TerminationDate]','$p[DOB]','$p[CountryCode]','$p[WorkStreet]','$p[WorkPOBox]','$p[WorkSuite]','$p[WorkCity]','$p[WorkState]',
+                '$p[WorkZip]','$p[WorkCountryCode]','$p[ServiceLevelCode]','$p[WorkLocationCode]','$p[WorkLocationDescription]',
+                '$p[CompanyAccountCode]','$p[CompanyAccountDescription]','$p[Department]','$p[DepartmentDescription]',
+                '$p[CompanyCode]','$p[OnHealthPlan]','$p[HealthProvider]','$p[HealthPlanType]','$p[HealthPlanID]',
+                '$p[Last4SSN]','$p[BenefitStatusCode]','$p[Relationship]'
+
 		)";
 
 		$result = $this->new_mysql($sql);
@@ -69,11 +109,11 @@ class employees extends api {
 
 	public function list_employee() {
                 $this->is_access('Employer');
-		$sql = "SELECT * FROM `employee` WHERE `employer_id` = '$_SESSION[id]' ORDER BY `employee` ASC";
+		$sql = "SELECT * FROM `employee` WHERE `EmployeeNumber` = '$_SESSION[id]' ORDER BY `LastName` ASC, `FirstName` ASC";
 		$result = $this->new_mysql($sql);
 		while ($row = $result->fetch_assoc()) {
-			$ssn = substr($row['ssn'],-4);
-			$html .= "<tr><td>$row[employee]</td><td>XXX-XX-$ssn</td><td>$row[city], $row[state]</td><td>
+			$ssn = substr($row['SSN'],-4);
+			$html .= "<tr><td>$row[FirstName] $row[LastName]</td><td>XXX-XX-$ssn</td><td>$row[City], $row[State]</td><td>
 				<input type=\"button\" value=\"Edit\" class=\"btn btn-primary\" onclick=\"document.location.href='employer.php?section=edit_employee&id=$row[id]'\">
 				&nbsp;&nbsp;
 				<input type=\"button\" value=\"Delete\" class=\"btn btn-danger\" onclick=\"if(confirm('You are about to delete $row[employee]. Click OK to continue.')) { 
@@ -93,14 +133,14 @@ class employees extends api {
                 $this->is_access('Employer');
                 $template = "edit_employee.tpl";
 
-                $sql = "SELECT * FROM `employee` WHERE `id` = '$_GET[id]' AND `employer_id` = '$_SESSION[id]'";
+                $sql = "SELECT * FROM `employee` WHERE `id` = '$_GET[id]' AND `EmployeeNumber` = '$_SESSION[id]'";
                 $result = $this->new_mysql($sql);
                 while ($row = $result->fetch_assoc()) {
                         foreach ($row as $key=>$value) {
                                 $data[$key] = $value;
                         }
-                        $ssn = substr($row['ssn'],-4);
-	                $states = $this->get_states($row['state']);
+                        $ssn = substr($row['SSN'],-4);
+	                $states = $this->get_states($row['State']);
 	                $data['states'] = $states;
                 }
                 $data['ssn'] = $ssn;
@@ -116,8 +156,10 @@ class employees extends api {
 
 		$sql = "
 		UPDATE `employee` SET 
-			`employee` = '$p[employee]',
-			`gender` = '$p[gender]',
+			`FirstName` = '$p[employee]',
+			`MiddleName` = '$p[middle]',
+			`LastName` = '$p[last]',
+			`Gender` = '$p[gender]',
 			`pay_frequency` = '$p[pay_frequency]',
 			`annual_salary` = '$p[annual_salary]',
 			`hourly_rate` = '$p[hourly_rate]',
@@ -127,18 +169,43 @@ class employees extends api {
 			`employer_monthly_contribution` = '$p[employer_monthly_contribution]',
 			`pretax_premium_monthly` = '$p[pretax_premium_monthly]',
 			`hsa` = '$p[hsa]',
-			`email` = '$p[email]',
-			`mobile` = '$p[mobile]',
-			`address` = '$p[address]',
-			`city` = '$p[city]',
-			`state` = '$p[state]',
-			`zip` = '$p[zip]',
+			`EmailAddress` = '$p[email]',
+			`PhoneNumber` = '$p[mobile]',
+			`Street` = '$p[address]',
+			`City` = '$p[city]',
+			`State` = '$p[state]',
+			`PostalCode` = '$p[zip]',
 			`full_time` = '$p[full_time]',
-			`active` = '$p[active]',
+			`EmployeeStatus` = '$p[active]',
 			`misc` = '$p[misc]',
-			`date_of_hire` = '$p[date_of_hire]'
+			`date_of_hire` = '$p[date_of_hire]',
+			`TerminationDate` = '$p[TerminationDate]',
+			`DOB` = '$p[DOB]',
+			`CountryCode` = '$p[CountryCode]',
+			`WorkStreet` = '$p[WorkStreet]',
+			`WorkPOBox` = '$p[WorkPOBox]',
+			`WorkSuite` = '$p[WorkSuite]',
+			`WorkCity` = '$p[WorkCity]',
+			`WorkState` = '$p[WorkState]',
+			`WorkZip` = '$p[WorkZip]',
+			`WorkCountryCode` = '$p[WorkCountryCode]',
+			`ServiceLevelCode` = '$p[ServiceLevelCode]',
+			`WorkLocationCode` = '$p[WorkLocationCode]',
+			`WorkLocationDescription` = '$p[WorkLocationDescription]',
+			`CompanyAccountCode` = '$p[CompanyAccountCode]',
+			`CompanyAccountDescription` = '$p[CompanyAccountDescription]',
+			`Department` = '$p[Department]',
+			`DepartmentDescription` = '$p[DepartmentDescription]',
+			`CompanyCode` = '$p[CompanyCode]',
+			`OnHealthPlan` = '$p[OnHealthPlan]',
+			`HealthProvider` = '$p[HealthProvider]',
+			`HealthPlanType` = '$p[HealthPlanType]',
+			`HealthPlanID` = '$p[HealthPlanID]',
+			`Last4SSN` = '$p[Last4SSN]',
+			`BenefitStatusCode` = '$p[BenefitStatusCode]',
+			`Relationship` = '$p[Relationship]'
 
-		WHERE `id` = '$p[id]' AND `employer_id` = '$_SESSION[id]'
+		WHERE `id` = '$p[id]' AND `EmployeeNumber` = '$_SESSION[id]'
 		";
 		$result = $this->new_mysql($sql);
                 if ($result == "TRUE") {
@@ -159,7 +226,7 @@ class employees extends api {
 
 	public function delete_employee() {
                 $this->is_access('Employer');
-		$sql = "DELETE FROM `employee` WHERE `id` = '$_GET[id]' AND `employer_id` = '$_SESSION[id]'";
+		$sql = "DELETE FROM `employee` WHERE `id` = '$_GET[id]' AND `EmployeeNumber` = '$_SESSION[id]'";
                 $result = $this->new_mysql($sql);
                 if ($result == "TRUE") {
                         print "<br><font color=green>The employee was deleted. Loading...</font><br>";
@@ -197,32 +264,59 @@ class employees extends api {
 
 		if ($handle = fopen("../csv_files/".$new_file,r)) {
     			while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
-				if ($data[0] == "Employee") {
+				if ($data[0] == "First") {
 					// skip
 					$c = $num;
 				} else { 
 					$employee 			= $data[0];
-					$ssn				= $data[1];
-					$gender				= $data[2];
-					$pay_frequency			= $data[3];
-					$annual_salary			= $data[4];
-					$hourly_rate			= $data[5];
-					$w4_marital			= $data[6];
-					$w4_dependents			= $data[7];
-					$health_monthly_premium		= $data[8];
-					$employer_monthly_contribution	= $data[9];
-					$pretax_premium_monthly		= $data[10];
-					$hsa				= $data[11];
-					$email				= $data[12];
-					$mobile				= $data[13];
-					$address			= $data[14];
-					$city				= $data[15];
-					$state				= $data[16];
-					$zip				= $data[17];
-					$full_time			= $data[18];
-					$active				= $data[19];
-					$misc				= $data[20];
-					$date_of_hire			= $data[21];
+					$middle				= $data[1];
+					$last				= $data[2];
+					$ssn				= $data[3];
+					$gender				= $data[4];
+					$pay_frequency			= $data[5];
+					$annual_salary			= $data[6];
+					$hourly_rate			= $data[7];
+					$w4_marital			= $data[8];
+					$w4_dependents			= $data[9];
+					$health_monthly_premium		= $data[10];
+					$employer_monthly_contribution	= $data[11];
+					$pretax_premium_monthly		= $data[12];
+					$hsa				= $data[13];
+					$email				= $data[14];
+					$mobile				= $data[15];
+					$address			= $data[16];
+					$city				= $data[17];
+					$state				= $data[18];
+					$zip				= $data[19];
+					$full_time			= $data[20];
+					$active				= $data[21];
+					$misc				= $data[22];
+					$date_of_hire			= $data[23];
+					$TerminationDate		= $data[24];
+					$DOB				= $data[25];
+					$CountryCode			= $data[26];
+					$WorkStreet			= $data[27];
+					$WorkPOBox			= $data[28];
+					$WorkSuite			= $data[29];
+					$WorkCity			= $data[30];
+					$WorkState			= $data[31];
+					$WorkZip			= $data[32];
+					$WorkCountryCode		= $data[33];
+					$ServiceLevelCode		= $data[34];
+					$WorkLocationCode		= $data[35];
+					$WorkLocationDescription	= $data[36];
+					$CompanyAccountCode		= $data[37];
+					$CompanyAccountDescription	= $data[38];
+					$Department			= $data[39];
+					$DepartmentDescription		= $data[40];
+					$CompanyCode			= $data[41];
+					$OnHealthPlan			= $data[42];
+					$HealthProvider			= $data[43];
+					$HealthPlanType			= $data[44];
+					$HealthPlanID			= $data[45];
+					$Last4SSN			= $data[46];
+					$BenefitStatusCode		= $data[47];
+					$Relationship			= $data[48];
 
 					$date_of_hire = date("Y-m-d", strtotime($date_of_hire));
 					$full_time = strtolower($full_time);
@@ -230,7 +324,7 @@ class employees extends api {
 					$active = strtolower($active);
 					$active = ucfirst($active);
 
-					$sql2 = "SELECT `email` FROM `employee` WHERE `email` = '$email'";
+					$sql2 = "SELECT `EmailAddress` FROM `employee` WHERE `EmailAddress` = '$email'";
 					$result2 = $this->new_mysql($sql2);
 					while ($row2 = $result2->fetch_assoc()) {
 						print "<br><font color=red>The email <b>$email</b> is already registered. Please make sure all emails in the CSV file are unique and must have a value.</font><br>";
@@ -256,15 +350,33 @@ class employees extends api {
 			                $ssn4 = substr($ssn,-4);
 			                $sundance_id = $company . $ssn4;
 
-					$sql_array[] = "INSERT INTO `employee` (`sundance_id`,`employer_id`,`employee`,`ssn`,`gender`,`pay_frequency`,`annual_salary`,`hourly_rate`,
-					`w4_marital`,`w4_dependents`,`health_monthly_premium`,`employer_monthly_contribution`,`pretax_premium_monthly`,`hsa`,`email`,
-					`mobile`,`address`,`city`,`state`,`zip`,`full_time`,`active`,`misc`,`date_of_hire`) VALUES
-					('$sundance_id','$_SESSION[id]','$employee','$ssn','$gender','$pay_frequency','$annual_salary','$hourly_rate',
-					'$w4_marital','$w4_dependents','$health_monthly_premium','$employer_monthly_contribution','$pretax_premium_monthly','$hsa','$email',
-					'$mobile','$address','$city','$state','$zip','$full_time','$active','$misc','$date_of_hire')";
+					$sql_array[] = "INSERT INTO `employee` (
+					`sundance_id`,`EmployeeNumber`,`FirstName`,`MiddleName`,`LastName`,`SSN`,`Gender`,`pay_frequency`,
+					`annual_salary`,`hourly_rate`,
+					`w4_marital`,`w4_dependents`,`health_monthly_premium`,`employer_monthly_contribution`,
+					`pretax_premium_monthly`,`hsa`,`EmailAddress`,
+					`PhoneNumber`,`Street`,`City`,`State`,`PostalCode`,`full_time`,`EmployeeStatus`,`misc`,`date_of_hire`,
 
+					`TerminationDate`,`DOB`,`CountryCode`,`WorkStreet`,`WorkPOBox`,`WorkSuite`,`WorkCity`,`WorkState`,
+					`WorkZip`,`WorkCountryCode`,`ServiceLevelCode`,`WorkLocationCode`,`WorkLocationDescription`,
+					`CompanyAccountCode`,`CompanyAccountDescription`,`Department`,`DepartmentDescription`,
+					`CompanyCode`,`OnHealthPlan`,`HealthProvider`,`HealthPlanType`,`HealthPlanID`,
+					`Last4SSN`,`BenefitStatusCode`,`Relationship`
 
-					//print "$employee | $ssn | $gender | $pay_frequency | $annual_salary | $hourly_rate | $w4_marital | $w4_dependents | $health_monthly_premium | $employer_monthly_contribution | $pretax_premium_monthly | $hsa | $email | $mobile | $address | $city | $state | $full_time | $active | $misc | $date_of_hire<Br><hr>";
+					) 
+					VALUES
+					('$sundance_id','$_SESSION[id]','$employee','$middle','$last','$ssn','$gender','$pay_frequency',
+					'$annual_salary','$hourly_rate',
+					'$w4_marital','$w4_dependents','$health_monthly_premium','$employer_monthly_contribution',
+					'$pretax_premium_monthly','$hsa','$email',
+					'$mobile','$address','$city','$state','$zip','$full_time','$active','$misc','$date_of_hire,
+
+                                        '$TerminationDate','$DOB','$CountryCode','$WorkStreet','$WorkPOBox','$WorkSuite','$WorkCity','$WorkState',
+                                        '$WorkZip','$WorkCountryCode','$ServiceLevelCode','$WorkLocationCode','$WorkLocationDescription',
+                                        '$CompanyAccountCode','$CompanyAccountDescription','$Department','$DepartmentDescription',
+                                        '$CompanyCode','$OnHealthPlan','$HealthProvider','$HealthPlanType','$HealthPlanID',
+                                        '$Last4SSN','$BenefitStatusCode','$Relationship'
+					')";
 
     				}
 			}
