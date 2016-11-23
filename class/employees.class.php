@@ -39,6 +39,43 @@ class employees extends api {
 		$this->load_smarty($data,$template);
 	}
 
+	public function edit_spouse() {
+                $this->is_access('Employer');
+                $states = $this->get_states($null);
+                $template = "edit_spouse.tpl";
+
+		// get spouse data if any
+		$sql = "
+		SELECT
+			`s`.*
+
+		FROM
+			`spouse` s, `employee` e
+
+		WHERE
+			`s`.`employeeID` = '$_GET[id]'
+			AND `s`.`employeeID` = `e`.`id`
+		";
+		$result = $this->new_mysql($sql);
+		while ($row = $result->fetch_assoc()) {
+			foreach ($row as $key=>$value) {
+				$data[$key] = $value;
+			}
+			$found = "1";
+			$data['type'] = "update";
+                        $states = $this->get_states($row['State']);
+                        $data['states'] = $states;
+		}
+		if ($found != "1") {
+			$data['type'] = "new";
+			$data['employeeID'] = $_GET['id'];
+                        $states = $this->get_states($null);
+                        $data['states'] = $states;
+			$data['last_4'] = 'xxx-xx-xxxx';
+		}
+		$this->load_smarty($data,$template);
+	}
+
 	public function new_employee() {
                 $this->is_access('Employer');
 		$states = $this->get_states($null);

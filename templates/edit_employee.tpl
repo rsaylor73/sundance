@@ -1,5 +1,5 @@
 <div id="main_element">
-<h2>Edit Employee</h2>
+<h2>Edit Employee : <a href="javascript:void(0)" onclick="if(confirm('Please make sure you save your work before editing the Spouse/Domestic Partner record. Click OK to continue. Any un-saved work will be lost.')) { document.location.href='employer.php?section=edit_spouse&id={$id}'}">Edit Spouse/Domestic Partner</a></h2>
 <hr>
 {$msg}
 
