@@ -32,6 +32,7 @@ switch ($section) {
 	print "Welcome to My Mobile Health Plan. To get started please click to login as an Employer or an Employee.<br>";
 	break;
 
+
 }
 
 $smarty->display('footer.tpl');

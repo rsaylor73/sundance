@@ -16,7 +16,8 @@
     <meta name="HandheldFriendly" content="true">
         
     <title>My Mobile Health Plan</title>
-            
+    
+        
     <!-- Bootstrap Core CSS -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
             
