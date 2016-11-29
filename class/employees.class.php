@@ -91,6 +91,7 @@ class employees extends api {
                 $this->load_smarty($null,$template);
 	}
 
+	/* This will update the spouse record */
 	public function update_spouce() {
                 $this->is_access('Employer');
 
