@@ -123,7 +123,6 @@ class employees extends api {
 			`Street`,`City`,`State`,`PostalCode`) VALUES ('$p[employeeID]','$p[FirstName]','$p[MiddleName]','$p[LastName]','$p[SSN]','$p[Gender]',
 			'$p[DOB]','$p[EmailAddress]','$p[PhoneNumber]','$p[Street]','$p[City]','$p[State]','$p[PostalCode]')";
 		}
-
 		$result = $this->new_mysql($sql);
 		if ($result == "TRUE") {
 			print "<br><font color=green>The record was saved. Loading...</font><br>";
