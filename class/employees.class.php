@@ -65,13 +65,13 @@ class employees extends api {
 			$data['type'] = "update";
                         $states = $this->get_states($row['State']);
                         $data['states'] = $states;
+			$data['ssn2'] = substr($row['SSN'], -4);
 		}
 		if ($found != "1") {
 			$data['type'] = "new";
 			$data['employeeID'] = $_GET['id'];
                         $states = $this->get_states($null);
                         $data['states'] = $states;
-			$data['last_4'] = 'xxx-xx-xxxx';
 		}
 		$this->load_smarty($data,$template);
 	}
@@ -89,6 +89,55 @@ class employees extends api {
 
 		$template = "upload_csv.tpl";
                 $this->load_smarty($null,$template);
+	}
+
+	public function update_spouce() {
+                $this->is_access('Employer');
+
+                foreach ($_POST as $key=>$value) {
+                        $p[$key] = $this->linkID->real_escape_string($value);
+                }
+
+		$sql = "SELECT `employeeID` FROM `spouse` WHERE `employeeID` = '$p[employeeID]'";
+		$result = $this->new_mysql($sql);
+		while ($row = $result->fetch_assoc()) {
+			$found = "1";
+		}
+
+		if ($found == "1") {
+			// update
+			if ($p['SSN'] != "") {
+				$ssn = ",`SSN` = '$p[SSN]'";
+			}
+
+			$sql = "UPDATE `spouse` SET `FirstName` = '$p[FirstName]', `MiddleName` = '$p[MiddleName]', `LastName` = '$p[LastName]',
+			`Gender` = '$p[Gender]', `DOB` = '$p[DOB]', `EmailAddress` = '$p[EmailAddress]', `PhoneNumber` = '$p[PhoneNumber]',
+			`Street` = '$p[Street]', `City` = '$p[City]', `State` = '$p[State]', `PostalCode` = '$p[PostalCode]' $ssn
+			WHERE `employeeID` = '$p[employeeID]'
+			";
+
+		} else {
+			// insert
+			$sql = "INSERT INTO `spouse` (`employeeID`,`FirstName`,`MiddleName`,`LastName`,`SSN`,`Gender`,`DOB`,`EmailAddress`,`PhoneNumber`,
+			`Street`,`City`,`State`,`PostalCode`) VALUES ('$p[employeeID]','$p[FirstName]','$p[MiddleName]','$p[LastName]','$p[SSN]','$p[Gender]',
+			'$p[DOB]','$p[EmailAddress]','$p[PhoneNumber]','$p[Street]','$p[City]','$p[State]','$p[PostalCode]')";
+		}
+
+		$result = $this->new_mysql($sql);
+		if ($result == "TRUE") {
+			print "<br><font color=green>The record was saved. Loading...</font><br>";
+		} else {
+			print "<br><font color=red>The record failed to update. Loading...</font><br>";
+		}
+
+                ?>
+                <script>
+                setTimeout(function() {
+                        document.location.href='employer.php?section=employees';
+                }
+                ,2000);
+                </script>
+                <?php
 	}
 
 	public function save_employee() {

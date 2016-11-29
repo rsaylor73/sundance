@@ -50,14 +50,14 @@
          dateFormat: "yy-mm-dd",
          changeMonth: true,
          changeYear: true,
-         minDate: "-99M", 
+         minDate: "-99Y", 
          maxDate: "-1D"
       });
       $( "#date2" ).datepicker({ 
          dateFormat: "yy/mm/dd",
          changeMonth: true,
          changeYear: true,
-         minDate: "-99M", 
+         minDate: "-99Y", 
          maxDate: "-1D"
       });
       $( "#schedule_date" ).datepicker({ 
@@ -107,18 +107,18 @@
 
 		{if $userType eq 'Employer'}
 			{if $logged eq 'yes'}
-				<li><a href="?section=employees">Employees</a></li>
-				<li><a href="?section=profile">Profile</a></li>
-				<li><a href="?section=logout">Logout</a></li>
+				<li><a href="employer.php?section=employees">Employees</a></li>
+				<li><a href="employer.php?section=profile">Profile</a></li>
+				<li><a href="employer.php?section=logout">Logout</a></li>
 			{/if}
 		{/if}
 
 		{if $userType eq 'Admin'}
 			{if $logged eq 'yes'}
-				<li><a href="?section=users">Employer Users</a></li>
-				<li><a href="?section=admins">Admin Users</a></li>
-                                <li><a href="?section=profilea">Profile</a></li>
-                                <li><a href="?section=logout">Logout</a></li>
+				<li><a href="admin.php?section=users">Employer Users</a></li>
+				<li><a href="admin.php?section=admins">Admin Users</a></li>
+                                <li><a href="admin.php?section=profilea">Profile</a></li>
+                                <li><a href="admin.php?section=logout">Logout</a></li>
 			{/if}
 		{/if}
 

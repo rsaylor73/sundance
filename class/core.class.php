@@ -79,7 +79,38 @@ class core {
 			$found = "1";
 		}
 		if ($found != "1") {
-			print "<br><br><font color=red>Sorry, but the information you entered does not match our records.</font><br><br>";
+			// check for spouse
+	                $sql = "
+        	        SELECT
+                	        `s`.`id`,
+	                        `s`.`EmailAddress`
+        	        FROM
+                	        `employee` e,
+                        	`users` u,
+				`spouse` s
+
+	                WHERE
+				`s`.`employeeID` = `e`.`id`
+        	                AND `e`.`EmployeeNumber` = `u`.`id`
+                	        AND `u`.`company` = '$_POST[company]'
+	                        AND `s`.`FirstName` = '$_POST[employee]'
+        	                AND `s`.`LastName` = '$_POST[last]'
+                	        AND SUBSTRING(`s`.`SSN`, -4) = '$_POST[ssn]'
+
+	                LIMIT 1
+        	        ";
+	                $result = $this->new_mysql($sql);
+			while ($row = $result->fetch_assoc()) {
+				$uupass = md5($_POST['uupass']);
+				$sql2 = "UPDATE `spouse` SET `uupass` = '$uupass' WHERE `id` = '$row[id]'";
+	                        $result2 = $this->new_mysql($sql2);
+	                        print "<br><br><font color=green>Your account has been registered. Click on Employee above then login using your email 
+	                        <b>$row[email]</b> and the password you just created. If you forget your password you will need to re-register.</font><br><br>";
+        	                $found = "1";
+				if ($found != "1") {
+					print "<br><br><font color=red>Sorry, but the information you entered does not match our records.</font><br><br>";
+				}
+			}
 		}
 		
 	}
@@ -165,12 +196,41 @@ class core {
                 if ($found == "1") {
                         return "TRUE";
                 } else {
-                        $remote_addr = $_SERVER['REMOTE_ADDR'];
-                        if ($remote_addr == SERVER_IP) { // Server IP of the virtual host
-                                return "TRUE";
-                        } else {
-                                return "FALSE";
-                        }
+
+		        // spouse
+		        $sql = "
+		        SELECT 
+		                `employee`.`EmployeeStatus`,
+		                `spouse`.*,
+		                `users`.`logo`
+
+		        FROM 
+		               `employee`,`spouse`,`users`
+
+		        WHERE 
+		               `spouse`.`EmailAddress` = '$_SESSION[EmailAddress]' 
+		                AND `spouse`.`uupass` = '$_SESSION[uupass]'
+		                AND `spouse`.`employeeID` = `employee`.`id`
+		                AND `employee`.`EmployeeNumber` = `users`.`id`
+		        ";
+	                $result = $this->new_mysql($sql);
+	                while ($row = $result->fetch_assoc()) {
+	        	        $found = "1";
+        	                // update session data
+	                        foreach ($row as $key=>$value) {
+	                                $_SESSION[$key] = $value;
+        	                }
+                	}
+			if ($found == "1") {
+				return "TRUE";
+			} else {
+	                        $remote_addr = $_SERVER['REMOTE_ADDR'];
+        	                if ($remote_addr == SERVER_IP) { // Server IP of the virtual host
+	                                return "TRUE";
+        	                } else {
+                	                return "FALSE";
+	                        }
+			}
                 }
 	}
 

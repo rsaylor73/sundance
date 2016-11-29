@@ -10,29 +10,33 @@
 <table class="table">
 <tr>
 	<td>First Name:</td><td><input type="text" name="FirstName" size="30" required value="{$FirstName}"></td>
-	<td>Middle Name:</td><td><input type="text" name="middle" size="30" value="{$MiddleName}"></td>
+	<td>Middle Name:</td><td><input type="text" name="MiddleName" size="30" value="{$MiddleName}"></td>
 </tr>
 <tr>
-	<td>Last Name:</td><td><input type="text" name="last" size="30" value="{$LastName}"></td>
-	<td>S.S.N:</td><td><input type="password" name="SSN" placeholder="{$last_4}"</td>
+	<td>Last Name:</td><td><input type="text" name="LastName" size="30" value="{$LastName}"></td>
+	{if $SSN eq ""}
+	<td>S.S.N:</td><td><input type="password" name="SSN" placeholder="xxx-xx-xxxx" required></td>
+	{else}
+	<td>S.S.N:</td><td>xxx-xx-{$ssn2}</td>
+	{/if}
 </tr>
 <tr>
-	<td>Gender:</td><td><select name="gender" required><option selected>{$Gender}</option><option>Male</option><option>Female</option></select></td>
-        <td>Date Of Birth:</td><td><input type="text" name="DOB" value="{$DOB}" size="30"></td>
+	<td>Gender:</td><td><select name="Gender" required><option selected>{$Gender}</option><option>Male</option><option>Female</option></select></td>
+        <td>Date Of Birth:</td><td><input type="text" name="DOB" id="date1" value="{$DOB}" size="30"></td>
 </tr>
 
 
 <tr>
-	<td>Personal Email:</td><td><input type="text" name="email" value="{$EmailAddress}" size="30" required></td>
-	<td>Phone Number:</td><td><input type="text" name="mobile" value="{$PhoneNumber}" size="30"></td>
+	<td>Personal Email:</td><td><input type="text" name="EmailAddress" value="{$EmailAddress}" size="30" required></td>
+	<td>Phone Number:</td><td><input type="text" name="PhoneNumber" value="{$PhoneNumber}" size="30"></td>
 </tr>
 <tr>
-	<td>Street:</td><td><input type="text" name="address" size="30" value="{$Street}" required></td>
-	<td>City:</td><td><input type="text" name="city" size="30" value="{$City}" required></td>
+	<td>Street:</td><td><input type="text" name="Street" size="30" value="{$Street}" required></td>
+	<td>City:</td><td><input type="text" name="City" size="30" value="{$City}" required></td>
 </tr>
 <tr>
-	<td>State:</td><td><select name="state" id="state" required>{$states}</td>
-	<td>Postal Code:</td><td><input type="text" name="zip" value="{$PostalCode}" size="30" required></td>
+	<td>State:</td><td><select name="State" id="State" required>{$states}</td>
+	<td>Postal Code:</td><td><input type="text" name="PostalCode" value="{$PostalCode}" size="30" required></td>
 </tr>
 
 

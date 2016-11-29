@@ -29,7 +29,7 @@ switch ($section) {
 	break;
 
 	default:
-	print "Welcome to Sundance Bennifits. To get started please click to login as an Employer or an Employee.<br>";
+	print "Welcome to My Mobile Health Plan. To get started please click to login as an Employer or an Employee.<br>";
 	break;
 
 }

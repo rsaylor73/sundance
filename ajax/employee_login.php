@@ -49,7 +49,53 @@ while ($row = $result->fetch_assoc()) {
 
 
 if ($ok != "1") {
-	print "<font color=red><br>Login failed.</font>";
+	// spouse
+	$sql = "
+        SELECT 
+		`employee`.`EmployeeStatus`,
+		`spouse`.*,
+		`users`.`logo`
+
+        FROM 
+               `employee`,`spouse`,`users`
+
+        WHERE 
+               `spouse`.`EmailAddress` = '$_GET[email]' 
+                AND `spouse`.`uupass` = '$_GET[uupass]'
+		AND `spouse`.`employeeID` = `employee`.`id`
+                AND `employee`.`EmployeeNumber` = `users`.`id`
+	";
+
+
+	$result = $core->new_mysql($sql);
+	while ($row = $result->fetch_assoc()) {
+        	foreach ($row as $key=>$value) {
+	                $_SESSION[$key] = $value;
+	        }
+	        $_SESSION['logged'] = "TRUE";
+        	$_SESSION['userType'] = "Employee";
+	        $ok = "1";
+	        if ($row['EmployeeStatus'] == "Yes") {
+	           print "<div class=\"modal-body\"><br><br><font color=green>Login sucessfull. Loading please wait...</font><br><bR></div>";
+	        } else {
+	                print "<div class=\"modal-body\"><br><br><font color=orange>Sorry, but your account is no longer active. Loading please wait...</font><br><bR></div>";
+	                session_destroy();
+	        }
+
+	        ?>
+	        <script>
+        	setTimeout(function() {
+	                document.location.href='employee.php?section=dashboard';
+	                //window.location.replace('employer.php?section=dashboard')
+	        }
+	        ,2000);
+	        </script>
+	        <?php
+	}
+
+	if ($ok != "1") {
+		print "<font color=red><br>Login failed.</font>";
+	}
 }
 
 ?>
