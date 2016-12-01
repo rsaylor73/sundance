@@ -8,7 +8,7 @@ class api extends core {
  	       $this->is_access('Admin');
 
 		// employee
-		$sql = "SHOW COLUMNS FROM `employee` WHERE `Field` NOT IN ('exported','id','UserName','uupass')";
+		$sql = "SHOW COLUMNS FROM `employee` WHERE `Field` NOT IN ('exported','UserName','uupass')";
 		$result = $this->new_mysql($sql);
 		while ($row = $result->fetch_assoc()) {
 			$header .= "$row[Field],";
@@ -20,11 +20,11 @@ class api extends core {
 
 		$fields = trim($fields,",");
 
-		$sql = "SELECT `sundance_id`,`EmployeeNumber`,`FirstName`,`MiddleName`,`LastName`,`SSN`,`Gender`,`pay_frequency`,`annual_salary`,`hourly_rate`,`w4_marital`,`w4_dependents`,`health_monthly_premium`,`employer_monthly_contribution`,`pretax_premium_monthly`,`hsa`,`EmailAddress`,`PhoneNumber`,`Street`,`City`,`State`,`PostalCode`,`full_time`,`EmployeeStatus`,`misc`,`date_of_hire`,`TerminationDate`,`DOB`,`CountryCode`,`WorkStreet`,`WorkPOBox`,`WorkSuite`,`WorkCity`,`WorkState`,`WorkZip`,`WorkCountryCode`,`ServiceLevelCode`,`WorkLocationCode`,`WorkLocationDescription`,`CompanyAccountCode`,`CompanyAccountDescription`,`Department`,`DepartmentDescription`,`CompanyCode`,`OnHealthPlan`,`HealthProvider`,`HealthPlanType`,`HealthPlanID`,`Last4SSN`,`BenefitStatusCode`,`Relationship`,`exported`,`id` FROM `employee` WHERE `exported` != 'Yes'";
+		$sql = "SELECT `id`,`sundance_id`,`EmployeeNumber`,`FirstName`,`MiddleName`,`LastName`,`SSN`,`Gender`,`pay_frequency`,`annual_salary`,`hourly_rate`,`w4_marital`,`w4_dependents`,`health_monthly_premium`,`employer_monthly_contribution`,`pretax_premium_monthly`,`hsa`,`EmailAddress`,`PhoneNumber`,`Street`,`City`,`State`,`PostalCode`,`full_time`,`EmployeeStatus`,`misc`,`date_of_hire`,`TerminationDate`,`DOB`,`CountryCode`,`WorkStreet`,`WorkPOBox`,`WorkSuite`,`WorkCity`,`WorkState`,`WorkZip`,`WorkCountryCode`,`ServiceLevelCode`,`WorkLocationCode`,`WorkLocationDescription`,`CompanyAccountCode`,`CompanyAccountDescription`,`Department`,`DepartmentDescription`,`CompanyCode`,`OnHealthPlan`,`HealthProvider`,`HealthPlanType`,`HealthPlanID`,`Last4SSN`,`BenefitStatusCode`,`Relationship`,`exported`,`id` FROM `employee` WHERE `exported` != 'Yes'";
 
 		$result = $this->new_mysql($sql);
 		while ($row = $result->fetch_assoc()) {
-			$data .= "$row[sundance_id],$row[EmployeeNumber],$row[FirstName],$row[MiddleName],$row[LastName],$row[SSN],$row[Gender],$row[pay_frequency],$row[annual_salary],$row[hourly_rate],$row[w4_marital],$row[w4_dependents],$row[health_monthly_premium],$row[employer_monthly_contribution],$row[pretax_premium_monthly],$row[hsa],$row[EmailAddress],$row[PhoneNumber],$row[Street],$row[City],$row[State],$row[PostalCode],$row[full_time],$row[EmployeeStatus],$row[misc],$row[date_of_hire],$row[TerminationDate],$row[DOB],$row[CountryCode],$row[WorkStreet],$row[WorkPOBox],$row[WorkSuite],$row[WorkCity],$row[WorkState],$row[WorkZip],$row[WorkCountryCode],$row[ServiceLevelCode],$row[WorkLocationCode],$row[WorkLocationDescription],$row[CompanyAccountCode],$row[CompanyAccountDescription],$row[Department],$row[DepartmentDescription],$row[CompanyCode],$row[OnHealthPlan],$row[HealthProvider],$row[HealthPlanType],$row[HealthPlanID],$row[Last4SSN],$row[BenefitStatusCode],$row[Relationship]\n";
+			$data .= "$row[id],$row[sundance_id],$row[EmployeeNumber],$row[FirstName],$row[MiddleName],$row[LastName],$row[SSN],$row[Gender],$row[pay_frequency],$row[annual_salary],$row[hourly_rate],$row[w4_marital],$row[w4_dependents],$row[health_monthly_premium],$row[employer_monthly_contribution],$row[pretax_premium_monthly],$row[hsa],$row[EmailAddress],$row[PhoneNumber],$row[Street],$row[City],$row[State],$row[PostalCode],$row[full_time],$row[EmployeeStatus],$row[misc],$row[date_of_hire],$row[TerminationDate],$row[DOB],$row[CountryCode],$row[WorkStreet],$row[WorkPOBox],$row[WorkSuite],$row[WorkCity],$row[WorkState],$row[WorkZip],$row[WorkCountryCode],$row[ServiceLevelCode],$row[WorkLocationCode],$row[WorkLocationDescription],$row[CompanyAccountCode],$row[CompanyAccountDescription],$row[Department],$row[DepartmentDescription],$row[CompanyCode],$row[OnHealthPlan],$row[HealthProvider],$row[HealthPlanType],$row[HealthPlanID],$row[Last4SSN],$row[BenefitStatusCode],$row[Relationship]\n";
 			$sql2 = "UPDATE `employee` SET `exported` = 'Yes' WHERE `id` = '$row[id]'";
 			$result2 = $this->new_mysql($sql2);
 		}
