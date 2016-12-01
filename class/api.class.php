@@ -31,9 +31,11 @@ class api extends core {
 
 		$today = date("Y_m_d");
 		$filename = "employee_".$today.".csv";
+		$file_e2 = $filename;
 		$path = "/home/sundance/csv_export/";
 
 		$file = $path . $filename;
+		$file_e = $file;
 		$f = fopen($file,"w");
 		fwrite($f,$header);
 		fwrite($f,$data);
@@ -62,13 +64,22 @@ class api extends core {
 
 
                 $filename = "spouse_".$today.".csv";
+		$file_s2 = $filename;
                 $path = "/home/sundance/csv_export/";
 
                 $file = $path . $filename;
+		$file_s = $file;
                 $f = fopen($file,"w");
                 fwrite($f,$header2);
                 fwrite($f,$data2);
                 fclose($f);
+
+
+		$connection = ssh2_connect(SFTP_IP, SFTP_PORT);
+		ssh2_auth_password($connection, SFTP_US, SFTP_PW);
+
+		ssh2_scp_send($connection, $file_e, '/home/sftpc/csv/'.$file_e2, 0644);
+                ssh2_scp_send($connection, $file_s, '/home/sftpc/csv/'.$file_s2, 0644);
 
 
 		print "Done!<br>";

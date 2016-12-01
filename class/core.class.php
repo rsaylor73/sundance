@@ -140,6 +140,7 @@ class core {
                 } else {
                         $remote_addr = $_SERVER['REMOTE_ADDR'];
                         if ($remote_addr == SERVER_IP) { // Server IP of the virtual host
+				$_SESSION['userType'] = "Admin";
                                 return "TRUE";
                         } else {
                                 return "FALSE";
