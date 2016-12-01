@@ -12,6 +12,7 @@ if ($_POST['section'] != "") {
         $section = $_POST['section'];
 }
 
+
 if ($_SESSION['logged'] == "TRUE") {
         $smarty->assign('userType',$_SESSION['userType']);
         $smarty->assign('logged','yes');
@@ -20,6 +21,7 @@ if ($_SESSION['logged'] == "TRUE") {
 $smarty->display('header.tpl');
 
 $check = $core->check_employee_login();
+
 if ($check == "FALSE") {
         $smarty->display('employee_login.tpl');
 } else {

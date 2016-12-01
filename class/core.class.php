@@ -172,6 +172,7 @@ class core {
 
 	// employee login check
 	public function check_employee_login() {
+
 		$sql = "
 		SELECT `employee`.*, `users`.`logo`
 

@@ -99,6 +99,21 @@ class employees extends api {
                         $p[$key] = $this->linkID->real_escape_string($value);
                 }
 
+
+		if ($p['FirstName'] == "") {
+			$err = "1";
+		}
+		if ($p['LastName'] == "") {
+			$err = "1";
+		}
+		if ($p['EmailAddress'] == "") {
+			$err = "1";
+		}
+
+		if ($err == "1") {
+			print "<br><font color=red>One of the required fields was empty. You must enter in at least the first name, last name and email address. The email address must not be the same as the employee.</font><br><br>";
+		}
+
 		$sql = "SELECT `employeeID` FROM `spouse` WHERE `employeeID` = '$p[employeeID]'";
 		$result = $this->new_mysql($sql);
 		while ($row = $result->fetch_assoc()) {
@@ -455,14 +470,20 @@ class employees extends api {
 					'$annual_salary','$hourly_rate',
 					'$w4_marital','$w4_dependents','$health_monthly_premium','$employer_monthly_contribution',
 					'$pretax_premium_monthly','$hsa','$email',
-					'$mobile','$address','$city','$state','$zip','$full_time','$active','$misc','$date_of_hire,
+					'$mobile','$address','$city','$state','$zip','$full_time','$active','$misc','$date_of_hire',
 
                                         '$TerminationDate','$DOB','$CountryCode','$WorkStreet','$WorkPOBox','$WorkSuite','$WorkCity','$WorkState',
                                         '$WorkZip','$WorkCountryCode','$ServiceLevelCode','$WorkLocationCode','$WorkLocationDescription',
                                         '$CompanyAccountCode','$CompanyAccountDescription','$Department','$DepartmentDescription',
                                         '$CompanyCode','$OnHealthPlan','$HealthProvider','$HealthPlanType','$HealthPlanID',
                                         '$Last4SSN','$BenefitStatusCode','$Relationship'
-					')";
+					)";
+
+					/*
+					print "<br><b>Debug:</b><br><pre>";
+					print_r($sql_array);
+					print "</pre>";
+					*/
 
     				}
 			}

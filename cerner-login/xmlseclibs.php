@@ -1,0 +1,223 @@
+<?php
+/**
+ * xmlseclibs.php
+ *
+ * Copyright (c) 2007-2015, Robert Richards <rrichards@cdatazone.org>.
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ *   * Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ *
+ *   * Redistributions in binary form must reproduce the above copyright
+ *     notice, this list of conditions and the following disclaimer in
+ *     the documentation and/or other materials provided with the
+ *     distribution.
+ *
+ *   * Neither the name of Robert Richards nor the names of his
+ *     contributors may be used to endorse or promote products derived
+ *     from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+ * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ * COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+ * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+ * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+ * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ *
+ * @author    Robert Richards <rrichards@cdatazone.org>
+ * @copyright 2007-2015 Robert Richards <rrichards@cdatazone.org>
+ * @license   http://www.opensource.org/licenses/bsd-license.php  BSD License
+ * @version   1.4.2-dev
+ */
+session_start();
+include "../include/settings.php";
+include "../include/templates.php";
+
+$check = $core->check_employee_login();
+
+if ($check == "FALSE") {
+        $smarty->display('employee_login.tpl');
+} else {
+    
+
+//print "<pre>";
+//print_r($_SESSION);
+//print "</pre>";
+//exit;
+
+$xmlseclibs_srcdir = dirname(__FILE__) . '/src/';
+require $xmlseclibs_srcdir . '/XMLSecurityKey.php';
+require $xmlseclibs_srcdir . '/XMLSecurityDSig.php';
+require $xmlseclibs_srcdir . '/XMLSecEnc.php';
+
+#use \XMLSecurityDSig;
+#use \XMLSecurityKey;
+
+// attributes to send
+// assumes email, first name and last name are defined for the logged in wordpress user
+
+$directory = array(
+	'user1' => array(
+	),
+);
+
+$acs = "https://mymobile.stagingcernerwellness.com/dt/nutr/sso.asp";
+$destination = htmlspecialchars($acs);
+$audience = "https://mymobile.stagingcernerwellness.com/dt/nutr/sso.asp";
+
+// local IDP Entity ID
+$issuer = htmlspecialchars('https://portal.mymobilehealthplan.com');
+
+$id = "_";
+for ($i = 0; $i < 42; $i++ ) $id .= dechex( rand(0,15) );
+$assertionid = '';
+for ($i = 0; $i < 42; $i++ ) $assertionid .= dechex( rand(0,15) );
+$issueinstant = gmdate("Y-m-d\TH:i:s\Z", time() );
+$notonorafter = gmdate("Y-m-d\TH:i:s\Z", time() + 60 * 5);
+$notbefore = gmdate("Y-m-d\TH:i:s\Z", time() - 30);
+//$subject = htmlspecialchars($current_user->user_login);
+$subject = htmlspecialchars('1122334455');
+
+
+//authentication statement
+//assumes a user has already been authenticated
+
+$authnStatement = <<<XML
+  <saml:AuthnStatement AuthnInstant="$issueinstant" SessionIndex="1"
+  >
+   <saml:AuthnContext>
+    <saml:AuthnContextClassRef>urn:oasis:names:tc:SAML:2.0:ac:classes:Password</saml:AuthnContextClassRef>
+   </saml:AuthnContext>
+  </saml:AuthnStatement>
+XML;
+
+//attribute statement
+//get all attributes for user1 from $directory
+$attributes = "";
+foreach( $directory['user1'] as $name => $value) {
+	$attributes .= <<<ATTR
+   <saml:Attribute Name="$name">
+    <saml:AttributeValue>$value</saml:AttributeValue>
+   </saml:Attribute>
+ATTR;
+}
+$attributeStatement = <<<AS
+  <saml:AttributeStatement>
+$attributes
+  </saml:AttributeStatement>
+AS;
+
+//build the SAML response
+$xml = <<<XML
+<samlp:Response
+	xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol"
+	xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
+	ID="$id"
+	Version="2.0"
+	IssueInstant="$issueinstant"
+	Destination="$destination">
+ <saml:Issuer xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion">$issuer</saml:Issuer>
+ <samlp:Status xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol">
+  <samlp:StatusCode xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol" Value="urn:oasis:names:tc:SAML:2.0:status:Success"/>
+ </samlp:Status>
+ <saml:Assertion Version="2.0" ID="$assertionid" IssueInstant="$issueinstant">
+  <saml:Issuer>$issuer</saml:Issuer>
+   <saml:Subject>
+    <saml:NameID Format='urn:oasis:names:tc:SAML:2.0:nameid-format:persistent'>$subject</saml:NameID>
+    <saml:SubjectConfirmation Method="urn:oasis:names:tc:SAML:2.0:cm:bearer">
+     <saml:SubjectConfirmationData NotOnOrAfter="$notonorafter" Recipient="$destination" /></saml:SubjectConfirmation>
+   </saml:Subject>
+   <saml:Conditions NotBefore="$notbefore" NotOnOrAfter="$notonorafter">
+    <saml:AudienceRestriction>
+     <saml:Audience>$audience</saml:Audience>
+    </saml:AudienceRestriction>
+   </saml:Conditions>
+$authnStatement
+$attributeStatement
+ </saml:Assertion>
+</samlp:Response>
+XML;
+
+
+$keyfile = 'server.pem';
+$certfile = 'server.crt';
+$signingcert = 'server.crt';
+
+$dom = new DOMDocument();
+$dom->preserveWhiteSpace = FALSE;
+$dom->loadXML($xml);
+$dom->formatOutput = TRUE;
+$response = $dom;
+
+// sign the assertion
+$response = utils_xml_sign($response, $keyfile, $certfile);
+
+//send the assertion to $acs
+$response = base64_encode($response->saveXML());
+
+//$relay_state = "http://ec2-54-69-83-188.us-west-2.compute.amazonaws.com/secure/";
+//    <input type="hidden" name="RelayState" value="$relay_state" />
+
+$form = <<<FORM
+<doctype html><html><head><title>-></title></head>
+<body><form method="post" action="$acs">
+    <input type="hidden" name="SAMLResponse" value="$response" />
+<input type="submit" value="->" />
+</form><script type="text/javascript">document.forms[0].submit();</script>
+</body></html>
+FORM;
+ print $form;
+    
+}
+
+function utils_xml_sign($dom, $keyfile, $certfile) {
+        $dom = utils_xml_create($dom->saveXML(), TRUE);
+        $dsig = new XMLSecurityDSig();
+        $dsig->setCanonicalMethod(XMLSecurityDSig::EXC_C14N);
+        $root = $dom->getElementsByTagName('Assertion')->item(0);
+        assert('$root instanceof DOMElement');
+        $insert_into = $dom->getElementsByTagName('Assertion')->item(0);
+        $insert_before = $insert_into->getElementsByTagName('Subject')->item(0);
+        $dsig->addReferenceList(array($root),XMLSecurityDSig::SHA1, array('http://www.w3.org/2000/09/xmldsig#enveloped-signature', XMLSecurityDSig::EXC_C14N),
+                        array('id_name' => 'ID'));
+        $objKey = new XMLSecurityKey(XMLSecurityKey::RSA_SHA1, array('type'=>'private'));
+        $objKey->loadKey($keyfile, TRUE);
+        $dsig->sign($objKey);
+        $cert = $certfile;
+        $contents = file_get_contents($cert);
+        $dsig->add509Cert($contents, TRUE);
+        $dsig->insertSignature($insert_into, $insert_before);
+        return $dom;
+}
+
+function utils_xml_create($xml1, $preserveWhiteSpace = FALSE) {
+        $dom = new DOMDocument();
+        $dom->preserveWhiteSpace = $preserveWhiteSpace;
+        $dom->loadXML($xml1);
+        $dom->formatOutput = TRUE;
+        return $dom;
+}
+
+function getSamlTimestamp($unixTimestamp) {
+     return str_replace('+00:00', 'Z', gmdate("c",$unixTimestamp));
+ }
+
+function generateUniqueId($length) {
+    $chars = "abcdef0123456789";
+    $chars_len = strlen($chars);
+    $uniqueID = "";
+    for ($i = 0; $i < $length; $i++) {
+        $uniqueID .= substr($chars,rand(0,15),1);
+    }
+    return 'a'.$uniqueID;
+ }

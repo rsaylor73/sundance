@@ -13,7 +13,7 @@
 	<td>Middle Name:</td><td><input type="text" name="MiddleName" size="30" value="{$MiddleName}"></td>
 </tr>
 <tr>
-	<td>Last Name:</td><td><input type="text" name="LastName" size="30" value="{$LastName}"></td>
+	<td>Last Name:</td><td><input type="text" name="LastName" required size="30" value="{$LastName}"></td>
 	{if $SSN eq ""}
 	<td>S.S.N:</td><td><input type="password" name="SSN" placeholder="xxx-xx-xxxx" required></td>
 	{else}
