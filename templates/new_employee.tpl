@@ -54,7 +54,7 @@
 </tr>
 <tr>
 	<td>Active:</td><td><select name="active"><option>Yes</option><option>No</option></select></td>
-	<td>Misc. 301K, (etc) Monthly Amount:</td><td>$<input type="text" name="misc" size="30"></td>
+	<td>Misc. 401K, (etc) Monthly Amount:</td><td>$<input type="text" name="misc" size="30"></td>
 </tr>
 <tr>
 	<td>Date of Hire:</td><td><input type="text" name="date_of_hire" id="date1"></td>

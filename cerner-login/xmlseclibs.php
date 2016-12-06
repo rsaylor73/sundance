@@ -43,15 +43,28 @@ session_start();
 include "../include/settings.php";
 include "../include/templates.php";
 
+function Redirect($url, $permanent = false)
+{
+    if (headers_sent() === false)
+    {
+        header('Location: ' . $url, true, ($permanent === true) ? 301 : 302);
+    }
+
+    exit();
+}
+
+
 $check = $core->check_employee_login();
 
 if ($check == "FALSE") {
-        $smarty->display('employee_login.tpl');
+        //$smarty->display('employee_login.tpl');
+    Redirect('http://portal.mymobilehealthplan.com/employee.php', false);
 } else {
     
-
+$employeeNumber = $_SESSION['EmployeeNumber'];
+    
 //print "<pre>";
-//print_r($_SESSION);
+//print_r($employeeNumber);
 //print "</pre>";
 //exit;
 
@@ -71,9 +84,9 @@ $directory = array(
 	),
 );
 
-$acs = "https://mymobile.stagingcernerwellness.com/dt/nutr/sso.asp";
+$acs = "https://mymobilehealthplan.cernerwellness.com/dt/nutr/sso.asp";
 $destination = htmlspecialchars($acs);
-$audience = "https://mymobile.stagingcernerwellness.com/dt/nutr/sso.asp";
+$audience = "https://mymobilehealthplan.cernerwellness.com/dt/nutr/sso.asp";
 
 // local IDP Entity ID
 $issuer = htmlspecialchars('https://portal.mymobilehealthplan.com');
@@ -85,7 +98,7 @@ for ($i = 0; $i < 42; $i++ ) $assertionid .= dechex( rand(0,15) );
 $issueinstant = gmdate("Y-m-d\TH:i:s\Z", time() );
 $notonorafter = gmdate("Y-m-d\TH:i:s\Z", time() + 60 * 5);
 $notbefore = gmdate("Y-m-d\TH:i:s\Z", time() - 30);
-//$subject = htmlspecialchars($current_user->user_login);
+//$subject = htmlspecialchars($employeeNumber);
 $subject = htmlspecialchars('1122334455');
 
 

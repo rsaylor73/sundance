@@ -52,7 +52,7 @@
 	<td>Active:</td><td><select name="active"><option>{$EmployeeStatus}</option><option>Yes</option><option>No</option></select></td>
 </tr>
 <tr>
-	<td>Misc. 301K, (etc) Monthly Amount:</td><td>$<input type="text" value="{$misc}"  name="misc" size="30"></td>
+	<td>Misc. 401K, (etc) Monthly Amount:</td><td>$<input type="text" value="{$misc}"  name="misc" size="30"></td>
 	<td>Date of Hire:</td><td><input type="text" name="date_of_hire" value="{$date_of_hire}" id="date1"></td>
 </tr>
 <tr>
