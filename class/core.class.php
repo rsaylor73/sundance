@@ -192,7 +192,9 @@ class core {
                         $found = "1";
                         // update session data
                         foreach ($row as $key=>$value) {
-                                $_SESSION[$key] = $value;
+				if ($key != "EmployeeNumber") {
+	                                $_SESSION[$key] = $value;
+				}
                         }
                 }
                 if ($found == "1") {

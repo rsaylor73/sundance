@@ -24,10 +24,17 @@ $sql = "
 $result = $core->new_mysql($sql);
 while ($row = $result->fetch_assoc()) {
         foreach ($row as $key=>$value) {
-                $_SESSION[$key] = $value;
+		if ($key != "EmployeeNumber") {
+	                $_SESSION[$key] = $value;
+		}
         }
+
+	$_SESSION['EmployeeNumber'] = $row['id'];
+	$_SESSION['PortalID'] = $row['sundance_id'];
+
         $_SESSION['logged'] = "TRUE";
 	$_SESSION['userType'] = "Employee";
+
         $ok = "1";
         if ($row['EmployeeStatus'] == "Yes") {
            print "<div class=\"modal-body\"><br><br><font color=green>Login sucessfull. Loading please wait...</font><br><bR></div>";
@@ -35,7 +42,6 @@ while ($row = $result->fetch_assoc()) {
                 print "<div class=\"modal-body\"><br><br><font color=orange>Sorry, but your account is no longer active. Loading please wait...</font><br><bR></div>";
 		session_destroy();
         }
-
         ?>
         <script>
         setTimeout(function() {
@@ -53,6 +59,7 @@ if ($ok != "1") {
 	$sql = "
         SELECT 
 		`employee`.`EmployeeStatus`,
+		`employee`.`sundance_id` AS 'PortalID',
 		`spouse`.*,
 		`users`.`logo`
 
@@ -72,6 +79,8 @@ if ($ok != "1") {
         	foreach ($row as $key=>$value) {
 	                $_SESSION[$key] = $value;
 	        }
+		$employeenumber = $row['employeeID'] . "S";
+		$_SESSION['EmployeeNumber'] = $employeenumber;
 	        $_SESSION['logged'] = "TRUE";
         	$_SESSION['userType'] = "Employee";
 	        $ok = "1";

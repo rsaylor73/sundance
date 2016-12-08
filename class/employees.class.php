@@ -128,15 +128,20 @@ class employees extends api {
 
 			$sql = "UPDATE `spouse` SET `FirstName` = '$p[FirstName]', `MiddleName` = '$p[MiddleName]', `LastName` = '$p[LastName]',
 			`Gender` = '$p[Gender]', `DOB` = '$p[DOB]', `EmailAddress` = '$p[EmailAddress]', `PhoneNumber` = '$p[PhoneNumber]',
-			`Street` = '$p[Street]', `City` = '$p[City]', `State` = '$p[State]', `PostalCode` = '$p[PostalCode]' $ssn
+			`Street` = '$p[Street]', `City` = '$p[City]', `State` = '$p[State]', `PostalCode` = '$p[PostalCode]',
+			`WorkLocationCode` = '$p[WorkLocationCode]', `WorkLocationDescription` = '$p[WorkLocationDescription]'
+
+			$ssn
 			WHERE `employeeID` = '$p[employeeID]'
 			";
 
 		} else {
 			// insert
 			$sql = "INSERT INTO `spouse` (`employeeID`,`FirstName`,`MiddleName`,`LastName`,`SSN`,`Gender`,`DOB`,`EmailAddress`,`PhoneNumber`,
-			`Street`,`City`,`State`,`PostalCode`) VALUES ('$p[employeeID]','$p[FirstName]','$p[MiddleName]','$p[LastName]','$p[SSN]','$p[Gender]',
-			'$p[DOB]','$p[EmailAddress]','$p[PhoneNumber]','$p[Street]','$p[City]','$p[State]','$p[PostalCode]')";
+			`Street`,`City`,`State`,`PostalCode`,`WorkLocationCode`,`WorkLocationDescription`) 
+
+			VALUES ('$p[employeeID]','$p[FirstName]','$p[MiddleName]','$p[LastName]','$p[SSN]','$p[Gender]',
+			'$p[DOB]','$p[EmailAddress]','$p[PhoneNumber]','$p[Street]','$p[City]','$p[State]','$p[PostalCode]',$p[WorkLocationCode],'$p[WorkLocationDescription]')";
 		}
 		$result = $this->new_mysql($sql);
 		if ($result == "TRUE") {

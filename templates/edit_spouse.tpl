@@ -7,7 +7,7 @@
 <input type="hidden" name="section" value="update_spouce">
 <input type="hidden" name="employeeID" value="{$employeeID}">
 <input type="hidden" name="type" value="{$type}">
-<table class="table">
+<table class="table table-striped table-responsive">
 <tr>
 	<td>First Name:</td><td><input type="text" name="FirstName" size="30" required value="{$FirstName}"></td>
 	<td>Middle Name:</td><td><input type="text" name="MiddleName" size="30" value="{$MiddleName}"></td>
@@ -39,6 +39,10 @@
 	<td>Postal Code:</td><td><input type="text" name="PostalCode" value="{$PostalCode}" size="30" required></td>
 </tr>
 
+<tr>
+        <td>Work Location Code:</td><td><input type="text" name="WorkLocationCode" value="{$WorkLocationCode}" size="30"></td>
+        <td>Work Location Description:</td><td><input type="text" name="WorkLocationDescription" value="{$WorkLocationDescription}" size="30"></td>
+</tr>
 
 <tr id="ok"><td colspan="4"><input type="submit" class="btn btn-primary" value="Update Spouse/Domestic Partner">&nbsp;&nbsp;<input type="button" value="Cancel" class="btn btn-warning" onclick="document.location.href='employer.php'"></td></tr>
 <tr id="error" style="display:none"><td colspan="4"><font color=red><b>You have errors above. Please correct then before going forward.</b></font></td></tr>
