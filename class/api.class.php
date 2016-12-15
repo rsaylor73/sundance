@@ -115,7 +115,7 @@ class api extends core {
 		ssh2_auth_password($connection, SFTP_US, SFTP_PW);
 
 		print "Send $file_e | /ToHMC/$file_e2<br>";
-		ssh2_scp_send($connection, $file_e, '/ToHMC/'.$file_e2, 0644);
+		ssh2_scp_send($connection, $file_e, '/home/sundance/ToHMC/'.$file_e2, 0644);
                 //ssh2_scp_send($connection, $file_s, '/home/sftpc/csv/'.$file_s2, 0644);
 
 

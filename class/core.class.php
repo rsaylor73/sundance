@@ -36,12 +36,54 @@ class core {
         }
 
 	public function employee_dash() {
-		print "<h2>Welcome $_SESSION[FirstName] $_SESSION[LastName]</h2>";
 
-		print "<br><br>";
-		print '<a href="'.LINK1.'" target="blank">'.TITLE1.'</a><br>';
-                print '<a href="'.LINK2.'" target="blank">'.TITLE2.'</a><br>';
-                print '<a href="'.LINK3.'" target="blank">'.TITLE3.'</a><br>';
+        print '
+                <style>
+                        .top-buffer { margin-top:10px; margin-left:10px; margin-right:10px; }
+                </style>
+
+
+                <div class="row top-buffer">
+                        <div class="col-sm-12">
+			<h2>Welcome '.$_SESSION['FirstName'].' '.$_SESSION['LastName'].'</h2>
+                        </div>
+                </div>
+	';
+
+
+	print '
+
+                <div class="row top-buffer">
+                        <div class="col-sm-3">
+                                <center><img src="images/behavioral-health.png" width="128"></center><br>
+                        </div>
+                        <div class="col-sm-3">
+                                <center><img src="images/customer-service.png" width="128"></center><br>
+                        </div>
+                        <div class="col-sm-3">
+                                <center><img src="images/login.png" width="128"></center><br>
+                        </div>
+                        <div class="col-sm-3">
+                                <center><img src="images/my-mobile-doctors.png" width="128"></center><br>
+                        </div>
+                </div>
+
+                <div class="row top-buffer">
+                        <div class="col-sm-3">
+                                <center><img src="images/sleep.png" width="128"></center><br>
+                        </div>
+                        <div class="col-sm-3">
+                                <center><img src="images/vision-dental.png" width="128"></center><br>
+                        </div>
+                        <div class="col-sm-3">
+                                <center><a href="'.LINK1.'"><img src="images/wellness.png" width="128"></a><br>'.TITLE1.'</center>
+                        </div>
+                        <div class="col-sm-3">
+                                &nbsp;
+                        </div>
+                </div>
+        ';
+
 
 
 	}

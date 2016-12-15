@@ -29,7 +29,19 @@ switch ($section) {
 	break;
 
 	default:
-	print "Welcome to My Mobile Health Plan. To get started please click to login as an Employer or an Employee.<br>";
+	print '
+		<style>
+			.top-buffer { margin-top:10px; margin-left:10px; margin-right:10px; }
+		</style>
+
+
+		<div class="row top-buffer">
+			<div class="col-sm-12">
+				Welcome to My Mobile Health Plan. To get started please click to login as an Employer or an Employee.
+			</div>
+		</div>
+
+	';
 	break;
 
 
